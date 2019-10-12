@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.code</groupId>
+    <artifactId>code-base</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0</version>
+    <modules>
+        <module>thread-pool</module>
+        <module>common</module>
+        <module>exception-handler</module>
+        <module>cache</module>
+        <module>observer-action</module>
+    </modules>
+    <name>code-base</name>
+    <description>code base</description>
+
+    <properties>
+        <code.common>1.0.0</code.common>
+        <lombok.version>1.16.22</lombok.version>
+        <commons-lang3.version>3.5</commons-lang3.version>
+        <servelet-api.version>2.5</servelet-api.version>
+        <fastjson.version>1.2.58</fastjson.version>
+        <guava.version>18.0</guava.version>
+        <junit-version>4.12</junit-version>
+        <jedis-version>2.9.0</jedis-version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.code</groupId>
+                <artifactId>common</artifactId>
+                <version>${code.common}</version>
+            </dependency>
+            <!-- lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <!-- junit -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit-version}</version>
+            </dependency>
+           <!-- commons 工具 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <!-- servlet-api -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servelet-api.version}</version>
+            </dependency>
+            <!-- fast-json -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <!-- guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <!-- jedis -->
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis-version}</version>
+            </dependency>
+
+            <!-- springboot的依赖 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>1.5.10.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <showWarnings>true</showWarnings>
+                        <encoding>UTF-8</encoding>
+                        <debug>true</debug>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.1</version>
+                </plugin>
+            </plugins>
+
+        </pluginManagement>
+    </build>
+
+</project>

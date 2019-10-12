@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true" scanPeriod="10 seconds" debug="true">
+    <jmxConfigurator/>
+    <timestamp key="byDay" datePattern="yyyy-MM-dd"/>
+
+    <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %level [%t] %marker %msg%n"/>
+    <property name="ALERT_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level marker: %marker。 %message%n%xException%n"/>
+    <!-- 设置日志输出的目录 -->
+    <property name="LOG_PATH" value="/Users/gentryhuang/Desktop/log"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[SM]%date %level %10logger [%file:%line] %msg%n</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 添加appender：ALERT_MONITOR -->
+    <appender name="ALERT_MONITOR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <!-- 如果是tomcat，则是 /opt/logs/tomcat/alert_monitor.log -->
+        <file>/opt/logs/spring-boot/alert_monitor.log</file>
+        <Append>true</Append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/opt/logs/spring-boot/bak/alert_monitor.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${ALERT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 异常日志 -->
+    <appender name="EXCEPTION_HANDLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/exception_handler.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/bak/exception_handler.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>14</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 超时日志 -->
+    <appender name="TIME_OUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/time_out.log</File>
+        <Append>true</Append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/bak/time_out.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>14</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>utf-8</charset>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 时间监控日志 -->
+    <appender name="TIME_MONITOR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/time_monitor.log</file>
+        <Append>true</Append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/bak/time_monitor.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 任务日志 -->
+    <appender name="JOB" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/job.log</file>
+        <Append>true</Append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/bak/job.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 消息日志 -->
+    <appender name="ROCKETMQ" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/rocketmq.log</file>
+        <Append>true</Append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/bak/rocketmq.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 业务日志 -->
+    <appender name="BUSINESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/business.log</file>
+        <Append>true</Append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+           <!-- <fileNamePattern>${LOG_PATH}/bak/business.%d{yyyy-MM-dd}.log.zip</fileNamePattern>-->
+            <fileNamePattern>/Users/gentryhuang/Desktop/business.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 搜索引擎日志 -->
+    <appender name="SOLR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/solr.log</file>
+        <Append>true</Append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/bak/solr.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- 异步任务日志 -->
+    <appender name="THREAD_POOL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/thread_pool.log</file>
+        <Append>true</Append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/bak/thread_pool.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="EXCEPTION_HANDLER" level="INFO" additivity="false">
+        <appender-ref ref="EXCEPTION_HANDLER"/>
+        <appender-ref ref="ALERT_MONITOR"/>
+    </logger>
+
+    <logger name="TIME_OUT" level="INFO" additivity="false">
+        <appender-ref ref="TIME_OUT"/>
+        <appender-ref ref="ALERT_MONITOR"/>
+    </logger>
+
+    <logger name="TIME_MONITOR" level="INFO" additivity="false">
+        <appender-ref ref="TIME_MONITOR"/>
+        <appender-ref ref="ALERT_MONITOR"/>
+    </logger>
+
+    <logger name="JOB" level="INFO" additivity="false">
+        <appender-ref ref="JOB"/>
+        <appender-ref ref="ALERT_MONITOR"/>
+    </logger>
+
+    <logger name="ROCKETMQ" level="INFO" additivity="false">
+        <appender-ref ref="ROCKETMQ"/>
+        <appender-ref ref="ALERT_MONITOR"/>
+    </logger>
+
+    <logger name="BUSINESS" level="INFO" additivity="false">
+        <appender-ref ref="BUSINESS"/>
+        <appender-ref ref="ALERT_MONITOR"/>
+    </logger>
+
+    <logger name="SOLR" level="INFO" additivity="false">
+        <appender-ref ref="SOLR"/>
+        <appender-ref ref="ALERT_MONITOR"/>
+    </logger>
+
+    <logger name="THREAD_POOL" level="INFO" additivity="false">
+        <appender-ref ref="THREAD_POOL"/>
+        <appender-ref ref="ALERT_MONITOR"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="BUSINESS"/>
+    </root>
+</configuration>
