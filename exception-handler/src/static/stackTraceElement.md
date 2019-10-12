@@ -9,30 +9,6 @@ StackTrace(堆栈轨迹)可以认为是一系列方法调用过程的集合。�
 StackTraceElement表示StackTrace(堆栈轨迹)中的一个元素，即一个方法调用过程信息。
 
 ```java
-/*
- * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
 
 package java.lang;
 

@@ -157,9 +157,7 @@ public class ExceptionMessage {
     public static final String EQ_TIMEOUT = "timeout=";
 
     /**
-     * Required String parameter 'seat_code' is not present
-     * Required Short parameter 'pay_type' is not present
-     * Required request body content is missing: org.springframework.web.method.HandlerMethod$HandlerMethodParameter@edde33f7
+     * Require
      */
     public static final String REQUIRED_PARAMETER = "Required ";
 
@@ -176,6 +174,6 @@ public class ExceptionMessage {
     /**
      * 指定包前缀
      */
-    public static final String PACKAGE = "com.dfire";
+    public static final String PACKAGE = "com.code";
 
 }
