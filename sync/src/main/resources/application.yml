@@ -1,0 +1,46 @@
+spring:
+  rocketmq:
+    producer:
+      #消息生产者
+      name: xxx
+      topic: xxx
+      producerGroup: p_xxx
+      nameServerAddress: ip:port
+      retryTimesWhenSendFailed: 2
+      # 使用一个生产者一般够了
+      multi:
+      - name: xxx
+        topic: xxx
+        producerGroup: xxx
+        nameServerAddress: xxx
+        retryTimesWhenSendFailed: 2
+    consumer:
+      #消息消费者
+      name: xxx
+      topic: xxx
+      consumerGroup:  c_xxx
+      nameServerAddress: ip:port
+      # 消息处理器
+      consumerHandle:
+      - orderHandler
+      - orderPayHandler
+
+      # 其他消费者
+      multi:
+      - name: xxx
+        topic: xxx
+        consumerGroup: c_xxx
+        nameServerAddress: ip:port
+        consumerHandle:
+        - groupbuyOrderJoinHandler
+        - groupbuyOrderExpireHandler
+
+      - name: xxx
+        topic: xxx
+        consumerGroup: c_xxx
+        nameServerAddress: ip:port
+        consumerHandle:
+        - groupbuyCardChargeSuccessHandler
+        - groupbuyCardChargeDelayHandler
+
+

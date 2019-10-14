@@ -12,6 +12,7 @@
         <module>exception-handler</module>
         <module>cache</module>
         <module>observer-action</module>
+        <module>sync</module>
     </modules>
     <name>code-base</name>
     <description>code base</description>
@@ -25,6 +26,7 @@
         <guava.version>18.0</guava.version>
         <junit-version>4.12</junit-version>
         <jedis-version>2.9.0</jedis-version>
+        <toolkit-conver-version>1.0</toolkit-conver-version>
     </properties>
 
     <dependencyManagement>
@@ -46,7 +48,7 @@
                 <artifactId>junit</artifactId>
                 <version>${junit-version}</version>
             </dependency>
-           <!-- commons 工具 -->
+            <!-- commons 工具 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
@@ -77,6 +79,7 @@
                 <artifactId>jedis</artifactId>
                 <version>${jedis-version}</version>
             </dependency>
+
 
             <!-- springboot的依赖 -->
             <dependency>

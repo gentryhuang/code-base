@@ -37,6 +37,12 @@ public class CommLoggerFactory {
      * 业务日志
      */
     public final static Logger BUSINESS_LOGGER = LoggerFactory.getLogger("BUSINESS");
+
+    /**
+     * MQ消息日志
+     */
+    public final static Logger MESSAGE = LoggerFactory.getLogger("MESSAGE");
+
     /**
      * solr 数据日志
      */
