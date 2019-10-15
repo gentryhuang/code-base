@@ -11,7 +11,6 @@ import com.alibaba.rocketmq.remoting.netty.NettySystemConfig;
 import com.code.async.message.client.constants.NotifyDelayType;
 import com.code.async.message.client.constants.TracerConfig;
 import com.code.async.message.client.constants.Tracing;
-import com.code.async.message.client.util.Assert;
 import com.code.async.message.client.util.HessianUtil;
 import com.code.async.message.client.util.ThrowableHandler;
 import io.opentracing.Span;
@@ -19,6 +18,7 @@ import io.opentracing.Tracer;
 import io.opentracing.tag.Tags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.util.List;
@@ -72,12 +72,10 @@ public class SendManagerImplForRm implements SendManager {
     private AtomicInteger sendWhichQueue = new AtomicInteger(0);
 
     /**
-     * 通过Spring创建SendManagerImplForRm 实例时，该方法会调用
+     * 通过Spring创建SendManagerImplForRm 实例之后该方法会调用
      * @throws MQClientException
      */
     public void start() throws MQClientException {
-        Assert.isTrue(producerGroup.startsWith("p_") && producerGroup.contains(topic),
-                "生产者不符合规范！producerGroup:" + producerGroup + ",topic:" + topic);
         // 创建生产者对象
         sendProducer = new DefaultMQProducer(this.producerGroup);
         // 最大消息大小设定为2M，超出将会抛异常
@@ -126,8 +124,6 @@ public class SendManagerImplForRm implements SendManager {
      * @return
      */
     public String sendMsg(String tag, Object msg, MessageQueueSelector queueSelector, Object selectorArgs, String key, boolean... hessianSer) {
-        Assert.isNotNull(queueSelector);
-        Assert.isNotNull(selectorArgs);
         String ret = null;
         try {
             Message message = packMsg(key, tag, msg, hessianSer);

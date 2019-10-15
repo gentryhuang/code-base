@@ -1,14 +1,29 @@
+#spring:
+#   redis:
+#        name: cacheService
+#        sentinel:
+#            nodes: # ip:port
+#            master: # 名称
+#        database: 3
+#        pool:
+#            max-active: 10
+#            max-idle: 9
+#            min-idle: 9
+#            max-wait: 10000
+#            test-on-borrow: true
+#            time-between-eviction-runs-millis: 60000
+
 spring:
-   redis:
-        name: cacheService
-        sentinel:
-            nodes: # ip:port
-            master: # 名称
-        database: 3
-        pool:
-            max-active: 10
-            max-idle: 9
-            min-idle: 9
-            max-wait: 10000
-            test-on-borrow: true
-            time-between-eviction-runs-millis: 60000
+  redis:
+    name: cacheService
+    sentinel:
+      nodes: common101.redis.2dfire-daily.com:26379
+      master: cluster101
+    database: 3
+    pool:
+      max-active: 10
+      max-idle: 9
+      min-idle: 9
+      max-wait: 10000
+      test-on-borrow: true
+      time-between-eviction-runs-millis: 60000

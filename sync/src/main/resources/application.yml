@@ -1,46 +1,72 @@
+#spring:
+#  rocketmq:
+#    producer:
+#      #消息生产者
+#      name: xxx
+#      topic: xxx
+#      producerGroup: p_xxx
+#      nameServerAddress: ip:port
+#      retryTimesWhenSendFailed: 2
+#      # 使用一个生产者一般够了
+#      multi:
+#      - name: xxx
+#        topic: xxx
+#        producerGroup: p_xxx
+#        nameServerAddress: xxx
+#        retryTimesWhenSendFailed: 2
+#    consumer:
+#      #消息消费者
+#      name: xxx
+#      topic: xxx
+#      consumerGroup:  c_xxx
+#      nameServerAddress: ip:port
+#      # 消息处理器
+#      consumerHandle:
+#      - orderHandler
+#      - orderPayHandler
+#
+#      # 其他消费者
+#      multi:
+#      - name: xxx
+#        topic: xxx
+#        consumerGroup: c_xxx
+#        nameServerAddress: ip:port
+#        consumerHandle:
+#        - groupbuyOrderJoinHandler
+#        - groupbuyOrderExpireHandler
+#
+#      - name: xxx
+#        topic: xxx
+#        consumerGroup: c_xxx
+#        nameServerAddress: ip:port
+#        consumerHandle:
+#        - groupbuyCardChargeSuccessHandler
+#        - groupbuyCardChargeDelayHandler
+
+
 spring:
   rocketmq:
     producer:
-      #消息生产者
-      name: xxx
-      topic: xxx
-      producerGroup: p_xxx
-      nameServerAddress: ip:port
+      #主消息生产者
+      name: consumer_market
+      topic: consumer-market
+      producerGroup: p_consumer-market
+      nameServerAddress: mq101.2dfire-daily.com:9876;mq102.2dfire-daily.com:9876
       retryTimesWhenSendFailed: 2
-      # 使用一个生产者一般够了
-      multi:
-      - name: xxx
-        topic: xxx
-        producerGroup: xxx
-        nameServerAddress: xxx
-        retryTimesWhenSendFailed: 2
     consumer:
-      #消息消费者
-      name: xxx
-      topic: xxx
-      consumerGroup:  c_xxx
-      nameServerAddress: ip:port
-      # 消息处理器
+      #主消息消费者
+      name: orderHandler
+      topic: order
+      consumerGroup:  c_order_cm_cut_price
+      nameServerAddress: mq101.2dfire-daily.com:9876;mq102.2dfire-daily.com:9876
       consumerHandle:
-      - orderHandler
-      - orderPayHandler
-
-      # 其他消费者
+      - groupbuyOrderCreateHandler
       multi:
-      - name: xxx
-        topic: xxx
-        consumerGroup: c_xxx
-        nameServerAddress: ip:port
+      - name: consumerMarketHandler
+        topic: consumer-market
+        consumerGroup: c_consumer-market_super_groupbuy
+        nameServerAddress: mq101.2dfire-daily.com:9876;mq102.2dfire-daily.com:9876
         consumerHandle:
-        - groupbuyOrderJoinHandler
-        - groupbuyOrderExpireHandler
-
-      - name: xxx
-        topic: xxx
-        consumerGroup: c_xxx
-        nameServerAddress: ip:port
-        consumerHandle:
-        - groupbuyCardChargeSuccessHandler
-        - groupbuyCardChargeDelayHandler
+        - groupbuyOrderCancleHandler
 
 

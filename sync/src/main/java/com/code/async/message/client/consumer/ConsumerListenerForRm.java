@@ -7,8 +7,6 @@ import com.alibaba.rocketmq.common.consumer.ConsumeFromWhere;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.alibaba.rocketmq.common.protocol.heartbeat.MessageModel;
 import com.code.async.message.client.model.AsyncMsgRM;
-import com.code.async.message.client.util.Assert;
-import com.code.async.message.client.util.MessageConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,23 +60,14 @@ public class ConsumerListenerForRm extends BaseConsumerListener {
     private int consumeThreadMin = 20;
 
     /**
-     * ConsumerListenerForRm实例化时 会先调用该方法
+     * ConsumerListenerForRm实例化之后会调用该方法
      */
     @Override
     public void start() throws IOException, MQClientException {
-        /**
-         * 一个应用创建一个Consumer，由应用来维护此对象，可以设置为全局对象或者单例<br>
-         * 注意：ConsumerGroupName需要由应用来保证唯一
-         */
-        Assert.isTrue(consumerGroup.startsWith("c_") && consumerGroup.contains(topic),
-                "消费者不符合规范！consumerGroup:" + consumerGroup + ",topic:" + topic);
 
         //广播模式采用动态消费组的方式
         if (messageModel.equals(MessageModel.BROADCASTING)) {
             consumerGroup = consumerGroup + InetAddress.getLocalHost().getHostAddress().replace(".", "_");
-        }
-        if (MessageConfig.checkUnPublishEnv() && suspend) {
-            return;
         }
         // 创建Push模式的消息者
         consumer = new DefaultMQPushConsumer(consumerGroup);
@@ -180,12 +169,16 @@ public class ConsumerListenerForRm extends BaseConsumerListener {
         logger.info("ConsumerListenerForRm closed !");
     }
 
+    /**
+     * 消息监听器 - 同一队列的消息并行消费
+     */
     private class BaseListenerConcurrently implements MessageListenerConcurrently {
         @Override
         public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,
                                                         ConsumeConcurrentlyContext context) {
             MessageExt msg = msgs.get(0);
             AsyncMsgRM asyncMsgRM = new AsyncMsgRM(msg);
+            /** 消息监听器监听到消息后，会调用MultiConsumerHandle的consume方法，而MultiConsumerHandle中已经封装了 tag映射的handler Map集*/
             boolean ret = consumerHandle.consume(asyncMsgRM);
             if (!ret) {
                 logger.error("consume MQ failed,msgID:" + msg.getMsgId());
@@ -197,6 +190,9 @@ public class ConsumerListenerForRm extends BaseConsumerListener {
         }
     }
 
+    /**
+     * 消息监听器 - 同一队列的消息同一时刻只能一个线程消费，可保证消息在同一队列严格有序消费
+     */
     private class BaseListenerOrderly implements MessageListenerOrderly {
         @Override
         public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs, ConsumeOrderlyContext context) {

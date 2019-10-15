@@ -3,7 +3,9 @@ package com.code.async.message.client.consumer;
 import com.code.async.message.client.model.AsyncMsg;
 
 /**
- 消费类接口,实现该类处理具体的业务类型
+ *
+ * 消费类接口,实现该类处理具体的业务类型
+ *
  * 例子: DoBusiness类只处理messageTagA和messageTagB的消息</p>
  *
  * @MessageTag(tag = {"messageTagA","messageTagB"})

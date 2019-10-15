@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @MessageTag(tag = {SyncConstants.Tag.BUSINESS_TAG})
-public class GroupbuyOrderCreateHandler extends AbstractNotifyCallBack {
+public class CreateHandler extends AbstractNotifyCallBack {
 
     @Override
     @SuppressWarnings("all")
@@ -38,7 +38,8 @@ public class GroupbuyOrderCreateHandler extends AbstractNotifyCallBack {
 
     @Override
     protected boolean handle(AsyncMsg msg) throws Exception {
-        System.out.println("业务处理");
+        Object object = msg.getContent();
+        System.out.println("业务处理" + object);
         return true;
     }
 }

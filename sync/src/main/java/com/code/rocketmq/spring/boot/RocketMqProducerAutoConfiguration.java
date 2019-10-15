@@ -100,7 +100,6 @@ public class RocketMqProducerAutoConfiguration {
                 }
                 copyProperties(rocketMqProductProperties, rocketMqProductPropertie);
                 beanDefinitionRegistry.registerBeanDefinition(name, createBeanDefinition(rocketMqProductPropertie, SendManagerImplForRm.class));
-
             }
         }
 
@@ -129,7 +128,7 @@ public class RocketMqProducerAutoConfiguration {
         }
 
         /**
-         * 为除了主生产者外的生产者创建Bean定义
+         * 为除了主生产者外的生产者创建Bean定义，本质流程还是和SendManagerImplForRm 创建实例一样
          *
          * @param newProp
          * @param sendManagerImplForRmClass

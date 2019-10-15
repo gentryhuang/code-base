@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!-- consumer-activity Handle -->
+
+    <bean id="myMultiConsumerMsgHandle"
+          class="com.code.async.message.client.consumer.MultiConsumerHandle">
+        <property name="callbackList">
+            <list>
+                <bean class="com.code.async.message.client.useconsumer.CancleHandler"/>
+                <bean class="com.code.async.message.client.useconsumer.CreateHandler"/>
+            </list>
+        </property>
+    </bean>
+    <bean class="com.code.async.message.client.consumer.ConsumerListenerForRm" init-method="start"
+          destroy-method="close">
+        <property name="topic" value="${topic}"/>
+        <property name="consumerGroup" value="${consumerGroup}"/>
+        <property name="namesrvAddr" value="${namesrvAddr}"/>
+        <property name="consumerHandle" ref="myMultiConsumerMsgHandle"/>
+        <property name="consumeThreadMin" value="20"/>
+    </bean>
+
+    <!-- consumer-activity Handle -->
+
+
+</beans>

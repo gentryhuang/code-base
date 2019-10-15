@@ -20,14 +20,11 @@ public class InitFactory {
     public static final String BUFFER_MAX_SIZE_KEY = MAGIC_EYE_PREFIX + "BUFFER_MAX_SIZE";
     public static final String FLUSH_PERIOD = MAGIC_EYE_PREFIX + "FLUSH_PERIOD";
     public static final String KAFKA_SERVER_KEY = MAGIC_EYE_PREFIX + "KAFKA_ADDR";
-    public static final String KAFKA_TOPIC_KEY = MAGIC_EYE_PREFIX + "KAFKA_TOPIC";
-    public static final String KAFKA_COMPRESSION_TYPE = MAGIC_EYE_PREFIX + "KAFKA_COMPRESSION";
     public static final String SPAN_MAX_SIZE_KEY = MAGIC_EYE_PREFIX + "SPAN_MAX_SIZE";
     public static final String DEFAULT_SERVICE_NAME = "default";
     public static final Reporter DEFAULT_REPORTER = new NoopReporter();
     public static final Integer DEFAULT_MAX_SIZE = 1024 * 8;
     public static final Long DEFAULT_FLUSH_PERIOD = 5000L;
-    public static final String DEFAULT_TOPIC = "magiceye_v2";
     private static final Logger logger = LoggerFactory.getLogger(InitFactory.class);
 
     public static String getServiceName() {

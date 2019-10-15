@@ -10,13 +10,15 @@ import com.code.cache.jedis.cache.ICacheService;
 import com.code.common.exception.ExceptionPicker;
 import com.code.common.logger.CommLoggerFactory;
 import com.code.common.logger.LoggerUtil;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import javax.annotation.Resource;
 
 /**
+ * AbstractNotifyCallBack使用模版方法设计模式，handle方法让子类取实现。需要注意的是，消息监听回调方法调用的是ConsumerCallBack#process方法，
+ * handle方法在AbstractNotifyCallBack的process中，即这就要求我们在使用的使用要继承AbstractNotifyCallBack，然后重新handle方法即可。
+ *
  * @author shunhua
  * @date 2019-10-14
  */
@@ -30,9 +32,6 @@ public abstract class AbstractNotifyCallBack implements ConsumerCallBack {
     @Override
     public boolean process(AsyncMsg msg) {
         try {
-            if (!isPresellMsg(msg)) {
-                return true;
-            }
             //过滤消息
             if (filterMsg(msg)) {
                 return true;
@@ -47,15 +46,6 @@ public abstract class AbstractNotifyCallBack implements ConsumerCallBack {
         return true;
     }
 
-    /**
-     * 是否是预售消息（子类可重写）
-     *
-     * @param msg
-     * @return
-     */
-    protected boolean isPresellMsg(AsyncMsg msg) {
-        return true;
-    }
 
     /**
      * 子类处理具体业务逻辑

@@ -78,6 +78,7 @@ public class RocketMqConsumerAutoConfiguration implements ApplicationContextAwar
             consumerListenerForRm.setTopic(rocketMqConsumerProperties.getTopic());
             consumerListenerForRm.setNamesrvAddr(rocketMqConsumerProperties.getNameServerAddress());
             consumerListenerForRm.setConsumerGroup(rocketMqConsumerProperties.getConsumerGroup());
+            // 设置消息处理器（它里面包含tag与回调处理的映射关系）
             consumerListenerForRm.setConsumerHandle(multiConsumerHandle);
             if (rocketMqConsumerProperties.getMessageModel() != null) {
                 consumerListenerForRm.setMessageModel(rocketMqConsumerProperties.getMessageModel());
@@ -89,7 +90,7 @@ public class RocketMqConsumerAutoConfiguration implements ApplicationContextAwar
     }
 
     /**
-     * 配置其他的消费者
+     * 配置其他的消费者，本质流程还是和ConsumerListenerForRm 创建实例一样
      */
     @Configuration
     class MultiRocketMqConsumerAutoConfiguration implements BeanPostProcessor, InitializingBean {

@@ -8,11 +8,7 @@ public class TracerConfig {
 
     public static final String MQ_COMPONENT = "MQ";
 
-    public static final String ONS_COMPONENT = "ONS";
-
     public static final String TOPIC = "topic";
-
-    public static final String CONSUMER = "consumer";
 
     public static final String PRODUCER_GROUP = "producerGroup";
 

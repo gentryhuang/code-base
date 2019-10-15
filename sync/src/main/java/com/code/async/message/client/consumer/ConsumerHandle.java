@@ -3,12 +3,16 @@ package com.code.async.message.client.consumer;
 import com.code.async.message.client.model.AsyncMsg;
 
 /**
+ * ConsumerHandle用来设置 消费者订阅哪些标签（tag）
+ *
  * @author shunhua
  * @date 2019-10-14
  */
 public abstract class ConsumerHandle implements IConsumerHandle{
 
-    // 支持 || 关系
+    /**
+     * 支持 || 关系 , 多个订阅标签
+     */
     private String subExpression;
 
     /**
