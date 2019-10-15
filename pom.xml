@@ -13,6 +13,7 @@
         <module>cache</module>
         <module>observer-action</module>
         <module>sync</module>
+        <module>routing-datasource</module>
     </modules>
     <name>code-base</name>
     <description>code base</description>
