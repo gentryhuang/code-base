@@ -51,21 +51,21 @@ spring:
       name: consumer_market
       topic: consumer-market
       producerGroup: p_consumer-market
-      nameServerAddress: mq101.2dfire-daily.com:9876;mq102.2dfire-daily.com:9876
+      nameServerAddress: ip:port
       retryTimesWhenSendFailed: 2
     consumer:
       #主消息消费者
       name: orderHandler
       topic: order
       consumerGroup:  c_order_cm_cut_price
-      nameServerAddress: mq101.2dfire-daily.com:9876;mq102.2dfire-daily.com:9876
+      nameServerAddress: ip:port
       consumerHandle:
       - groupbuyOrderCreateHandler
       multi:
       - name: consumerMarketHandler
         topic: consumer-market
         consumerGroup: c_consumer-market_super_groupbuy
-        nameServerAddress: mq101.2dfire-daily.com:9876;mq102.2dfire-daily.com:9876
+        nameServerAddress: ip:port
         consumerHandle:
         - groupbuyOrderCancleHandler
 
