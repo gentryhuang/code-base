@@ -2,7 +2,11 @@ package rpc.test;
 
 import rpc.client.RPCClient;
 
-
+/**
+ *
+ * @author shunhua
+ * @date 2019-10-18
+ */
 public class RPCClientTest {
 
     public static void main(String[] args) {

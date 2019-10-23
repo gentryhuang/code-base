@@ -1,6 +1,10 @@
 package rpc.test;
 
-
+/**
+ *
+ * @author shunhua
+ * @date 2019-10-18
+ */
 public class HelloWorld implements IHelloWorld {
 
     @Override

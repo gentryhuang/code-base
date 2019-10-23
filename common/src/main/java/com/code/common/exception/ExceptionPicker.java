@@ -146,22 +146,26 @@ public class ExceptionPicker {
         }
         StringBuilder builder = new StringBuilder();
         builder.append(message).append(ExceptionMessage.SPLIT);
-        String requestMethod = (request.getMethod() + StringUtils.EMPTY).trim().toUpperCase(); // POST/GET 1.去空格, 2.转大写 字母
+        // POST/GET 1.去空格, 2.转大写 字母
+        String requestMethod = (request.getMethod() + StringUtils.EMPTY).trim().toUpperCase();
         StringBuilder urlParams = new StringBuilder();
         urlParams.append(requestMethod).append(ExceptionMessage.SPACE);
         urlParams.append(request.getRequestURI()).append(ExceptionMessage.QUESTION).append(request.getQueryString());
         if (ExceptionMessage.POST.equals(requestMethod)) {
-            if (StringUtils.isNotBlank(request.getQueryString())) { // POST 请求时，URL上包含参数
+            // POST 请求时，URL上包含参数
+            if (StringUtils.isNotBlank(request.getQueryString())) {
                 urlParams.append(ExceptionMessage.DUBBO_AMP);
             }
-            Map<String, String[]> params = request.getParameterMap(); // 以下是POST参数组装
+            // 以下是POST参数组装
+            Map<String, String[]> params = request.getParameterMap();
             for (String key : params.keySet()) {
                 urlParams.append(key).append(ExceptionMessage.EQUALS);
                 String[] values = params.get(key);
                 int length = values.length;
                 for (int i = 0; i < length; i++) {
                     urlParams.append(values[i]);
-                    if (i + 1 < length) { // 判断是否最后一个参数
+                    // 判断是否最后一个参数
+                    if (i + 1 < length) {
                         urlParams.append(ExceptionMessage.DUBBO_AMP);
                     }
                 }
