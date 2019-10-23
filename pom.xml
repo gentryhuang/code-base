@@ -15,6 +15,7 @@
         <module>sync</module>
         <module>routing-datasource</module>
         <module>rpc-instance</module>
+        <module>generic</module>
     </modules>
     <name>code-base</name>
     <description>code base</description>
