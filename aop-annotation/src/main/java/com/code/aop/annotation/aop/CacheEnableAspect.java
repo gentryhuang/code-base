@@ -1,0 +1,208 @@
+package com.code.aop.annotation.aop;
+
+import com.code.aop.annotation.annotation.CacheConfig;
+import com.code.aop.annotation.annotation.CacheEnable;
+import com.code.aop.annotation.constant.CacheConstant;
+import com.code.aop.annotation.constant.CacheKey;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import java.lang.reflect.Method;
+import java.util.*;
+
+/**
+ * CacheEnableAspect
+ *
+ * @author <a href="mailto:libao.huang@yunhutech.com">shunhua</a>
+ * @since 2019/10/31
+ * <p>
+ * desc：
+ */
+@Aspect
+@Component
+public class CacheEnableAspect implements ApplicationContextAware {
+    private ApplicationContext ctx;
+
+    @Around("@annotation(com.code.aop.annotation.annotation.CacheEnable)")
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+
+        CacheEnable memberCacheEnable = method.getAnnotation(CacheEnable.class);
+        CacheConfig memberCacheConfig = joinPoint.getTarget().getClass().getAnnotation(CacheConfig.class);
+
+
+        String cacheServiceName = memberCacheConfig.cacheServiceName();
+        ICacheService cacheService = (ICacheService) ctx.getBean(cacheServiceName);
+
+        String directory = memberCacheConfig.directory();
+        CacheKey cacheComplexKey = memberCacheEnable.getCacheKeyFromParam();
+
+        LoggerUtil.log(Level.INFO, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
+                new JsonKvFormat("CacheEnableAspect start =======")
+                        .add("cacheComplexKey", cacheComplexKey)
+                        .add("directory", directory).add("clazz", memberCacheEnable.clazz().getSimpleName()));
+
+        if (null == cacheService) {
+            LoggerUtil.log(Level.ERROR, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
+                    new JsonKvFormat("未初始化cacheService bean")
+                            .add("cacheComplexKeys", cacheComplexKey)
+                            .add("directory", directory).add("clazz", memberCacheEnable.clazz().getSimpleName()));
+            return joinPoint.proceed();
+        }
+        // key为空不走缓存
+        if (null == cacheComplexKey) {
+            return joinPoint.proceed();
+        }
+
+        // 缓存的key
+        List<String> getCacheKey = parsingKeyFromParam(directory, new CacheKey[]{cacheComplexKey}, joinPoint);
+        //  key为空不走缓存
+        if (CollectionUtils.isEmpty(getCacheKey)) {
+            return joinPoint.proceed();
+        }
+
+        String result = cacheService.get(directory + ":" + getCacheKey.get(0));
+        if (StringUtils.isNotBlank(result)) {
+            return JSON.parseObject(result, memberCacheEnable.clazz());
+        }
+        Object o = joinPoint.proceed();
+        // 放缓存
+        cacheService.set(getCacheKey.get(0), JSON.toJSONString(o), cacheComplexKey.getExpirationTime());
+        List<String> putCacheKeys = parsingKeyFromReturn(directory, memberCacheEnable.putCacheComplexKeyFromReturn(), o);
+        if (!CollectionUtils.isEmpty(putCacheKeys)) {
+            putCacheKeys.forEach(putCacheKey -> cacheService.set(putCacheKey, JSON.toJSONString(o), CacheConstant.CacheExpireTime.EXPIRE_WEEK));
+        }
+        return o;
+    }
+
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.ctx = applicationContext;
+    }
+
+
+    /**
+     * 获取方法参数名称
+     *
+     * @param joinPoint
+     * @return
+     */
+    private static String[] getFieldsName(JoinPoint joinPoint) {
+        Signature signature = joinPoint.getSignature();
+        MethodSignature methodSignature = (MethodSignature) signature;
+        // 通过这获取到方法的所有参数名称的字符串数组
+        String[] parameterNames = methodSignature.getParameterNames();
+        return parameterNames;
+    }
+
+
+    /**
+     * 解析缓存key
+     *
+     * @param directory
+     * @param cacheComplexKeys
+     * @param joinPoint
+     * @return
+     */
+    public static List<String> parsingKeyFromParam(String directory, MemberCacheKey[] cacheComplexKeys, JoinPoint joinPoint) {
+
+        // 从参数中取
+        Object[] paramValues = joinPoint.getArgs();
+
+        String[] paramNames = getFieldsName(joinPoint);
+
+        LoggerUtil.log(Level.INFO, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
+                new JsonKvFormat("CacheEnableAspect params =======").add("keyExpression", cacheComplexKeys)
+                        .add("paramNames", paramNames)
+                        .add("paramValues", paramValues));
+
+        Map<String, Object> paramsMap = new HashMap<>(paramValues.length);
+        for (int i = 0; i < paramNames.length; i++) {
+            paramsMap.put(paramNames[i], paramValues[i]);
+        }
+        //  解析key
+        List<String> cacheKeys = new ArrayList<>(cacheComplexKeys.length);
+        Arrays.stream(cacheComplexKeys).forEach(cacheComplexKey -> {
+            String[] keyExpressionValues = new String[cacheComplexKey.getKeyReplaceValues().length];
+
+            boolean keyExpressionValuesIsNull = true;
+            for (int i = 0; i < cacheComplexKey.getKeyReplaceValues().length; i++) {
+                String keyReplaceValue = cacheComplexKey.getKeyReplaceValues()[i];
+                if (keyReplaceValue.startsWith("#")) {
+                    String keyReplaceValueOfKey = keyReplaceValue.replace("#", "");
+                    if (!keyReplaceValueOfKey.contains(".")) {
+                        keyReplaceValue = paramsMap.get(keyReplaceValueOfKey).toString();
+                    } else {
+                        keyReplaceValue = parsingValueFromParamObject(keyReplaceValueOfKey, paramsMap);
+                    }
+                }
+                if (StringUtils.isNotBlank(keyReplaceValue)) {
+                    // 不需要从参数中取值的话就直接放入结果
+                    keyExpressionValues[i] = keyReplaceValue;
+                    keyExpressionValuesIsNull = false;
+                }
+            }
+            if (!keyExpressionValuesIsNull) {
+                cacheKeys.add(directory + ":" + String.format(cacheComplexKey.getKeyExpression(), keyExpressionValues));
+            }
+        });
+        return cacheKeys;
+    }
+
+    public static List<String> parsingKeyFromReturn(String directory, MemberCacheKey[] cacheComplexKeys, Object returnValue) {
+
+        LoggerUtil.log(Level.INFO, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
+                new JsonKvFormat("CacheEnableAspect parsingKeyFromReturn =======").add("keyExpression", cacheComplexKeys)
+                        .add("cacheComplexKeys", cacheComplexKeys)
+                        .add("returnValue", returnValue));
+        //  解析key
+        List<String> cacheKeys = new ArrayList<>(cacheComplexKeys.length);
+        Arrays.stream(cacheComplexKeys).forEach(cacheComplexKey -> {
+            String[] keyExpressionValues = new String[cacheComplexKeys.length];
+
+            for (int i = 0; i < cacheComplexKey.getKeyReplaceValues().length; i++) {
+                String keyReplaceValue = cacheComplexKey.getKeyReplaceValues()[i];
+                if (keyReplaceValue.startsWith("#")) {
+                    String keyReplaceValueOfKey = keyReplaceValue.replace("#", "");
+                    Object value;
+                    if (!keyReplaceValueOfKey.contains(".")) {
+                        value = ReflectUtil.getFieldValueByFieldName(keyReplaceValueOfKey, returnValue);
+                    } else {
+                        value = ReflectUtil.getFieldValueByFieldName(keyReplaceValueOfKey.split("\\.")[1], returnValue);
+                    }
+                    if (null != value) {
+                        keyReplaceValue = value.toString();
+                    }
+                }
+                // 不需要从参数中取值的话就直接放入结果
+                keyExpressionValues[i] = keyReplaceValue;
+            }
+            cacheKeys.add(directory + ":" + String.format(cacheComplexKey.getKeyExpression(), keyExpressionValues));
+        });
+        return cacheKeys;
+    }
+
+
+    private static String parsingValueFromParamObject(String keyName, Map<String, Object> paramsMap) {
+        String[] paramObjectAndAttribute = keyName.split("\\.");
+        if (paramObjectAndAttribute.length < 2) {
+            return keyName;
+        }
+        String objectName = paramObjectAndAttribute[0];
+        String attribute = paramObjectAndAttribute[1];
+        Object o = paramsMap.get(objectName);
+        //  反射获取值
+        Object value = ReflectUtil.getFieldValueByFieldName(attribute, o);
+        if (null == value) {
+            // 取不到值就返回keyName
+            return StringUtils.EMPTY;
+        }
+        return value.toString();
+    }
+}
+
+

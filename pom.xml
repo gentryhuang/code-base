@@ -16,6 +16,7 @@
         <module>routing-datasource</module>
         <module>rpc-instance</module>
         <module>generic</module>
+        <module>aop-annotation</module>
     </modules>
     <name>code-base</name>
     <description>code base</description>

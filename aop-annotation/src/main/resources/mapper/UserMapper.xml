@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.code.aop.annotation.dao.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.code.aop.annotation.domain.UserDO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, mobile, name
+  </sql>
+
+    <insert id="insert" parameterType="com.code.aop.annotation.domain.UserDO">
+        insert into user(id, mobile, name)
+        VALUES (
+        #{id,jdbcType=BIGINT},
+        #{mobile,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR},
+        )
+    </insert>
+
+    <update id="updateById" parameterType="com.code.aop.annotation.domain.UserDO">
+        update user
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            last_ver = last_ver+1
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateMobileById">
+        update user
+        SET mobile= #{mobile,jdbcType=VARCHAR},
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where id = #{id,jdbcType=BIGINT}
+        and is_valid=1
+    </select>
+
+    <select id="selectByMobile" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where mobile = #{mobile,jdbcType=VARCHAR}
+        and is_valid=1
+    </select>
+
+
+    <select id="selectByUserIds" parameterType="java.util.Set" resultMap="BaseResultMap">
+        <if test="null != userIds">
+            select
+            <include refid="Base_Column_List"/>
+            from user
+            where id in
+            <foreach collection="userIds" item="id" open="(" close=")" separator=",">
+                #{id,jdbcType=BIGINT}
+            </foreach>
+        </if>
+
+    </select>
+
+</mapper>
