@@ -1,9 +1,21 @@
 package com.code.aop.annotation.aop;
 
+import com.alibaba.fastjson.JSON;
 import com.code.aop.annotation.annotation.CacheConfig;
 import com.code.aop.annotation.annotation.CacheEnable;
 import com.code.aop.annotation.constant.CacheConstant;
 import com.code.aop.annotation.constant.CacheKey;
+import com.code.cache.jedis.cache.ICacheService;
+import com.code.common.logger.CommLoggerFactory;
+import com.code.common.logger.CommLoggerMarkers;
+import com.code.common.logger.LoggerUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -40,16 +52,15 @@ public class CacheEnableAspect implements ApplicationContextAware {
         String directory = memberCacheConfig.directory();
         CacheKey cacheComplexKey = memberCacheEnable.getCacheKeyFromParam();
 
-        LoggerUtil.log(Level.INFO, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
-                new JsonKvFormat("CacheEnableAspect start =======")
-                        .add("cacheComplexKey", cacheComplexKey)
-                        .add("directory", directory).add("clazz", memberCacheEnable.clazz().getSimpleName()));
+        LoggerUtil.info(CommLoggerFactory.BUSINESS_LOGGER,CommLoggerMarkers.BUSINESS,String.format(
+                "CacheEnableAspect start =======,cacheComplexKey:%s,directory:%s,clazz:%s",
+                String.valueOf(cacheComplexKey),directory,memberCacheEnable.clazz().getSimpleName()
+        ));
+
 
         if (null == cacheService) {
-            LoggerUtil.log(Level.ERROR, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
-                    new JsonKvFormat("未初始化cacheService bean")
-                            .add("cacheComplexKeys", cacheComplexKey)
-                            .add("directory", directory).add("clazz", memberCacheEnable.clazz().getSimpleName()));
+            LoggerUtil.error(CommLoggerFactory.BUSINESS_LOGGER, CommLoggerMarkers.BUSINESS,
+                    String.format("未初始化cacheService bean"));
             return joinPoint.proceed();
         }
         // key为空不走缓存
@@ -108,17 +119,17 @@ public class CacheEnableAspect implements ApplicationContextAware {
      * @param joinPoint
      * @return
      */
-    public static List<String> parsingKeyFromParam(String directory, MemberCacheKey[] cacheComplexKeys, JoinPoint joinPoint) {
+    public static List<String> parsingKeyFromParam(String directory, CacheKey[] cacheComplexKeys, JoinPoint joinPoint) {
 
         // 从参数中取
         Object[] paramValues = joinPoint.getArgs();
 
         String[] paramNames = getFieldsName(joinPoint);
 
-        LoggerUtil.log(Level.INFO, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
-                new JsonKvFormat("CacheEnableAspect params =======").add("keyExpression", cacheComplexKeys)
-                        .add("paramNames", paramNames)
-                        .add("paramValues", paramValues));
+        LoggerUtil.info(CommLoggerFactory.BUSINESS_LOGGER, CommLoggerMarkers.BUSINESS,
+                String.format("CacheEnableAspect params ======= ,keyExpression:%s,paramNames:%s,paramValues:%s",
+                        String.valueOf(cacheComplexKeys),String.valueOf(paramNames),String.valueOf(paramValues)));
+
 
         Map<String, Object> paramsMap = new HashMap<>(paramValues.length);
         for (int i = 0; i < paramNames.length; i++) {
@@ -153,12 +164,8 @@ public class CacheEnableAspect implements ApplicationContextAware {
         return cacheKeys;
     }
 
-    public static List<String> parsingKeyFromReturn(String directory, MemberCacheKey[] cacheComplexKeys, Object returnValue) {
+    public static List<String> parsingKeyFromReturn(String directory, CacheKey[] cacheComplexKeys, Object returnValue) {
 
-        LoggerUtil.log(Level.INFO, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
-                new JsonKvFormat("CacheEnableAspect parsingKeyFromReturn =======").add("keyExpression", cacheComplexKeys)
-                        .add("cacheComplexKeys", cacheComplexKeys)
-                        .add("returnValue", returnValue));
         //  解析key
         List<String> cacheKeys = new ArrayList<>(cacheComplexKeys.length);
         Arrays.stream(cacheComplexKeys).forEach(cacheComplexKey -> {

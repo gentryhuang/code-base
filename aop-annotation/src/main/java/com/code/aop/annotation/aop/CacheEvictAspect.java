@@ -1,8 +1,18 @@
 package com.code.aop.annotation.aop;
 
+import com.alibaba.fastjson.JSON;
 import com.code.aop.annotation.annotation.CacheConfig;
 import com.code.aop.annotation.annotation.CacheEvict;
 import com.code.aop.annotation.constant.CacheKey;
+import com.code.cache.jedis.cache.ICacheService;
+import com.code.common.logger.CommLoggerFactory;
+import com.code.common.logger.CommLoggerMarkers;
+import com.code.common.logger.LoggerUtil;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -38,21 +48,21 @@ public class CacheEvictAspect implements ApplicationContextAware {
 
 
         String directory = memberCacheConfig.directory();
+
         CacheKey[] cacheComplexKeys = memberCacheEvict.cacheEvictKeys();
 
         String cacheServiceName = memberCacheConfig.cacheServiceName();
 
         ICacheService cacheService = (ICacheService) ctx.getBean(cacheServiceName);
 
-        LoggerUtil.log(Level.INFO, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
-                new JsonKvFormat("进入CacheEnableAspect after ++++++++++++")
-                        .add("cacheComplexKeys", cacheComplexKeys)
-                        .add("directory", directory));
+
+        LoggerUtil.info(CommLoggerFactory.BUSINESS_LOGGER, CommLoggerMarkers.BUSINESS,
+                String.format("进入CacheEnableAspect after +++，cacheComplexKeys：%s,directory:%s",cacheComplexKeys.toString(),directory));
+
 
         if (null == cacheService) {
-            LoggerUtil.log(Level.ERROR, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
-                    new JsonKvFormat("未初始化cacheService bean").add("cacheComplexKeys", cacheComplexKeys)
-                            .add("directory", directory));
+            LoggerUtil.error(CommLoggerFactory.BUSINESS_LOGGER,CommLoggerMarkers.BUSINESS,
+                    "未初始化cacheService bean,cacheComplexkeys:%s",cacheComplexKeys.toString());
         }
         // 缓存的key
         List<String> cacheKeys = CacheEnableAspect.parsingKeyFromParam(directory, cacheComplexKeys, joinPoint);
