@@ -19,7 +19,7 @@ public class CacheConstant {
     /**
      * 缓存时间
      */
-    interface CacheExpireTime {
+    public interface CacheExpireTime {
         /**
          * 一分钟
          */

@@ -78,10 +78,8 @@ public class CacheEvictAspect implements ApplicationContextAware {
 
         long result = cacheService.del(cacheKeysOnDirectory);
         if (result <= 0) {
-            LoggerUtil.log(Level.WARN, MemberCenterLoggerFactory.CACHE_LOGGER, McLoggerMarker.CACHE,
-                    new JsonKvFormat("缓存删除失败").add("cacheKeysOnDirectory", cacheKeysOnDirectory)
-                            .add("directory", directory)
-                            .add("value", JSON.toJSONString(joinPoint.getTarget())));
+            LoggerUtil.warn(CommLoggerFactory.BUSINESS_LOGGER, CommLoggerMarkers.BUSINESS,
+                    String.format("缓存删除失败，cacheKeysOnDirectory:%s,directory:%s,value:%s", String.valueOf(cacheKeysOnDirectory), directory, JSON.toJSONString(joinPoint.getTarget())));
         }
     }
 
