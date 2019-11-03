@@ -2,8 +2,8 @@ spring:
    redis:
         name: cacheService
         sentinel:
-            nodes: # ip:port
-            master: # 名称
+            nodes: 192.168.25.100:6379
+            master: common-cache
         database: 3
         pool:
             max-active: 10

@@ -14,7 +14,6 @@ import org.springframework.context.annotation.ImportResource;
  * desc：
  */
 @SpringBootApplication
-@ImportResource({"classpath:config/*.xml", "classpath:mapper/*.xml"})
 @MapperScan("com.code.aop.annotation.dao.mapper")
 public class Application {
     public static void main(String[] args) {
