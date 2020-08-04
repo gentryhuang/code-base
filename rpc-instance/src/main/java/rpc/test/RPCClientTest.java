@@ -16,5 +16,4 @@ public class RPCClientTest {
         System.out.println(result);
 
     }
-
 }

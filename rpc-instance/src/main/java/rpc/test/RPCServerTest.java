@@ -12,7 +12,5 @@ public class RPCServerTest {
         RPCServer server = new RPCServer();
         server.registerService(new HelloWorld());
         server.startServer(8080);
-
     }
-
 }
