@@ -28,7 +28,7 @@
         <servelet-api.version>2.5</servelet-api.version>
         <fastjson.version>1.2.58</fastjson.version>
         <guava.version>18.0</guava.version>
-        <junit-version>4.12</junit-version>
+        <junit-version>4.13.1</junit-version>
         <jedis-version>2.9.0</jedis-version>
         <toolkit-conver-version>1.0</toolkit-conver-version>
     </properties>
